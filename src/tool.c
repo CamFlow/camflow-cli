@@ -125,16 +125,15 @@ void state( void ){
   printf("Machine id: %u\n", machine_id);
 
   printf("Provenance capture:\n");
-  if(provenance_get_enable()){
+  if(provenance_get_enable())
     printf("- capture enabled;\n");
-  }else{
+  else
     printf("- capture disabled;\n");
-  }
-  if( provenance_get_all() ){
+
+  if( provenance_get_all() )
     printf("- all enabled;\n");
-  }else{
+  else
     printf("- all disabled;\n");
-  }
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -155,14 +154,13 @@ void state( void ){
     printf("/%d", count_set_bits(filters[i].mask));
     printf(":%d ", ntohs(filters[i].port));
 
-    if((filters[i].op&PROV_NET_PROPAGATE) == PROV_NET_PROPAGATE){
+    if((filters[i].op&PROV_NET_PROPAGATE) == PROV_NET_PROPAGATE)
       printf("propagate");
-    }else if((filters[i].op&PROV_NET_TRACKED) == PROV_NET_TRACKED){
+    else if((filters[i].op&PROV_NET_TRACKED) == PROV_NET_TRACKED)
       printf("track");
-    }
-    if((filters[i].op&PROV_NET_RECORD) == PROV_NET_RECORD){
+
+    if((filters[i].op&PROV_NET_RECORD) == PROV_NET_RECORD)
       printf(" record");
-    }
     printf("\n");
   }
 
@@ -173,14 +171,13 @@ void state( void ){
     printf("/%d", count_set_bits(filters[i].mask));
     printf(":%d ", ntohs(filters[i].port));
 
-    if((filters[i].op&PROV_NET_PROPAGATE) == PROV_NET_PROPAGATE){
+    if((filters[i].op&PROV_NET_PROPAGATE) == PROV_NET_PROPAGATE)
       printf("propagate");
-    }else if((filters[i].op&PROV_NET_TRACKED) == PROV_NET_TRACKED){
+    else if((filters[i].op&PROV_NET_TRACKED) == PROV_NET_TRACKED)
       printf("track");
-    }
-    if((filters[i].op&PROV_NET_RECORD) == PROV_NET_RECORD){
+
+    if((filters[i].op&PROV_NET_RECORD) == PROV_NET_RECORD)
       printf(" record");
-    }
     printf("\n");
   }
 
@@ -188,11 +185,10 @@ void state( void ){
   printf("Security context filter (%ld).\n", size/sizeof(struct secinfo));
   for(i = 0; i < size/sizeof(struct secinfo); i++){
     printf("%s ", sec_filters[i].secctx);
-    if((sec_filters[i].op&PROV_SEC_PROPAGATE) == PROV_SEC_PROPAGATE){
+    if((sec_filters[i].op&PROV_SEC_PROPAGATE) == PROV_SEC_PROPAGATE)
       printf("propagate");
-    }else if((sec_filters[i].op&PROV_SEC_TRACKED) == PROV_SEC_TRACKED){
+    else if((sec_filters[i].op&PROV_SEC_TRACKED) == PROV_SEC_TRACKED)
       printf("track");
-    }
     printf("\n");
   }
 
@@ -200,11 +196,10 @@ void state( void ){
   printf("CGroup filter (%ld).\n", size/sizeof(struct cgroupinfo));
   for(i = 0; i < size/sizeof(struct cgroupinfo); i++){
     printf("%u ", cgroup_filters[i].cid);
-    if((cgroup_filters[i].op&PROV_CGROUP_PROPAGATE) == PROV_CGROUP_PROPAGATE){
+    if((cgroup_filters[i].op&PROV_CGROUP_PROPAGATE) == PROV_CGROUP_PROPAGATE)
       printf("propagate");
-    }else if((cgroup_filters[i].op&PROV_CGROUP_TRACKED) == PROV_CGROUP_TRACKED){
+    else if((cgroup_filters[i].op&PROV_CGROUP_TRACKED) == PROV_CGROUP_TRACKED)
       printf("track");
-    }
     printf("\n");
   }
 }
@@ -235,21 +230,20 @@ void file( const char* path){
   TAINT_ENCODE(prov_taint(&(inode_info)), PROV_N_BYTES, taint, TAINT_STR_LEN);
   printf("Taint: %s\n", taint);
   printf("\n");
-  if( provenance_is_tracked(&inode_info) ){
+  if( provenance_is_tracked(&inode_info) )
     printf("File is tracked.\n");
-  }else{
+  else
     printf("File is not tracked.\n");
-  }
-  if( provenance_is_opaque(&inode_info) ){
+
+  if( provenance_is_opaque(&inode_info) )
     printf("File is opaque.\n");
-  }else{
+  else
     printf("File is not opaque.\n");
-  }
-  if( provenance_does_propagate(&inode_info) ){
+
+  if( provenance_does_propagate(&inode_info) )
     printf("File propagates tracking.\n");
-  }else{
+  else
     printf("File is not propagating tracking.\n");
-  }
 }
 
 void process(uint32_t pid){
@@ -273,21 +267,20 @@ void process(uint32_t pid){
   TAINT_ENCODE(prov_taint(&(process_info)), PROV_N_BYTES, taint, TAINT_STR_LEN);
   printf("Taint: %s\n", taint);
   printf("\n");
-  if( provenance_is_tracked(&process_info) ){
+  if( provenance_is_tracked(&process_info) )
     printf("Process is tracked.\n");
-  }else{
+  else
     printf("Process is not tracked.\n");
-  }
-  if( provenance_is_opaque(&process_info) ){
+
+  if( provenance_is_opaque(&process_info) )
     printf("Process is opaque.\n");
-  }else{
+  else
     printf("Process is not opaque.\n");
-  }
-  if( provenance_does_propagate(&process_info) ){
+
+  if( provenance_does_propagate(&process_info) )
     printf("Process propagates tracking.\n");
-  }else{
+  else
     printf("Process is not propagating tracking.\n");
-  }
 }
 
 #define CHECK_ATTR_NB(argc, min) if(argc < min){ usage();exit(-1);}
@@ -333,29 +326,25 @@ int main(int argc, char *argv[]){
       err = provenance_propagate_file(argv[2], true);
     }else {
       err = provenance_track_file(argv[2], is_str_true(argv[3]));
-      if(!is_str_true(argv[3])){
+      if(!is_str_true(argv[3]))
         err |= provenance_propagate_file(argv[2], false);
-      }
     }
-    if(err < 0){
+    if(err < 0)
       perror("Could not change tracking settings for this file.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_TAINT_FILE){
     CHECK_ATTR_NB(argc, 4);
     err = provenance_taint_file(argv[2], strtoul(argv[3], NULL, 0));
-    if(err < 0){
+    if(err < 0)
       perror("Could not change taint settings for this file.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_OPAQUE_FILE){
     CHECK_ATTR_NB(argc, 4);
     err = provenance_opaque_file(argv[2], is_str_true(argv[3]));
-    if(err < 0){
+    if(err < 0)
       perror("Could not change opacity settings for this file.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_PROCESS){
@@ -369,95 +358,86 @@ int main(int argc, char *argv[]){
       err = provenance_propagate_process(atoi(argv[2]), true);
     }else {
       err = provenance_track_process(atoi(argv[2]), is_str_true(argv[3]));
-      if(!is_str_true(argv[3])){
+      if(!is_str_true(argv[3]))
         err |= provenance_propagate_process(atoi(argv[2]), false);
-      }
     }
-    if(err < 0){
+    if(err < 0)
       perror("Could not change tracking settings for this process.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_TAINT_PROCESS){
     CHECK_ATTR_NB(argc, 4);
     err = provenance_taint_process(atoi(argv[2]), strtoul(argv[3], NULL, 0));
-    if(err < 0){
+    if(err < 0)
       perror("Could not change taint settings for this process.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_OPAQUE_PROCESS){
     CHECK_ATTR_NB(argc, 4);
     err = provenance_opaque_process(atoi(argv[2]), is_str_true(argv[3]));
-    if(err < 0){
+    if(err < 0)
       perror("Could not change opacity settings for this process.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_TRACK_IPV4_INGRESS){
     CHECK_ATTR_NB(argc, 4);
-    if( is_str_propagate( argv[3]) ){
+    if( is_str_propagate( argv[3]) )
       err = provenance_ingress_ipv4_propagate(argv[2]);
-    }else if( is_str_record( argv[3]) ){
+    else if( is_str_record( argv[3]) )
       err = provenance_ingress_ipv4_record(argv[2]);
-    }else if( is_str_track(argv[3])){
+    else if( is_str_track(argv[3]))
       err = provenance_ingress_ipv4_track(argv[2]);
-    }else if( is_str_delete(argv[3])){
+    else if( is_str_delete(argv[3]))
       err = provenance_ingress_ipv4_delete(argv[2]);
-    }
-    if(err < 0){
+
+    if(err < 0)
       perror("Could not change ipv4 ingress.\n");
-    }else{
+    else
       printf(CMD_WARNING("Only apply to newly created connection.\n"));
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_TRACK_IPV4_EGRESS){
     CHECK_ATTR_NB(argc, 4);
-    if( is_str_propagate( argv[3]) ){
+    if( is_str_propagate( argv[3]) )
       err = provenance_egress_ipv4_propagate(argv[2]);
-    }else if( is_str_record(argv[3]) ){
+    else if( is_str_record(argv[3]) )
       err = provenance_egress_ipv4_record(argv[2]);
-    }else if( is_str_track(argv[3])){
+    else if( is_str_track(argv[3]))
       err = provenance_egress_ipv4_track(argv[2]);
-    }else if( is_str_delete(argv[3])){
+    else if( is_str_delete(argv[3]))
       err = provenance_egress_ipv4_delete(argv[2]);
-    }
-    if(err < 0){
+
+    if(err < 0)
       perror("Could not change ipv4 egress.\n");
-    }else{
+    else
       printf(CMD_WARNING("Only apply to newly created connection.\n"));
-    }
+
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_SECCTX_FILTER){
     CHECK_ATTR_NB(argc, 4);
-    if( is_str_propagate( argv[3]) ){
+    if( is_str_propagate( argv[3]) )
       err = provenance_secctx_propagate(argv[2]);
-    }else if( is_str_track(argv[3])){
+    else if( is_str_track(argv[3]))
       err = provenance_secctx_track(argv[2]);
-    }else if( is_str_delete(argv[3])){
+    else if( is_str_delete(argv[3]))
       err = provenance_secctx_delete(argv[2]);
-    }
 
-    if(err < 0){
+    if(err < 0)
       perror("Could not change security context filter.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_CGROUP_FILTER){
     CHECK_ATTR_NB(argc, 4);
-    if( is_str_propagate( argv[3]) ){
+    if( is_str_propagate( argv[3]) )
       err = provenance_cgroup_propagate(strtoul(argv[2], NULL, 0));
-    }else if( is_str_track(argv[3])){
+    else if( is_str_track(argv[3]))
       err = provenance_cgroup_track(strtoul(argv[2], NULL, 0));
-    }else if( is_str_delete(argv[3])){
+    else if( is_str_delete(argv[3]))
       err = provenance_cgroup_delete(strtoul(argv[2], NULL, 0));
-    }
 
-    if(err < 0){
+    if(err < 0)
       perror("Could not change CGroup filter.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILTER_NODE){
@@ -467,14 +447,13 @@ int main(int argc, char *argv[]){
       printf("Error invalid node type\n");
       exit(-1);
     }
-    if(is_str_true(argv[3])){
+    if(is_str_true(argv[3]))
       err = provenance_add_node_filter(id);
-    }else{
+    else
       err = provenance_remove_node_filter(id);
-    }
-    if(err < 0){
+
+    if(err < 0)
       perror("Could not change filter settings for this file.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILTER_EDGE){
@@ -484,14 +463,13 @@ int main(int argc, char *argv[]){
       printf("Error invalid relation type\n");
       exit(-1);
     }
-    if(is_str_true(argv[3])){
+    if(is_str_true(argv[3]))
       err = provenance_add_relation_filter(id);
-    }else{
+    else
       err = provenance_remove_relation_filter(id);
-    }
-    if(err < 0){
+
+    if(err < 0)
       perror("Could not change filter settings for this file.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_PROPAGATE_FILTER_NODE){
@@ -501,14 +479,13 @@ int main(int argc, char *argv[]){
       printf("Error invalid node type\n");
       exit(-1);
     }
-    if(is_str_true(argv[3])){
+    if(is_str_true(argv[3]))
       err = provenance_add_propagate_node_filter(id);
-    }else{
+    else
       err = provenance_remove_propagate_node_filter(id);
-    }
-    if(err < 0){
+
+    if(err < 0)
       perror("Could not change propagation settings for this file.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_PROPAGATE_FILTER_EDGE){
@@ -518,14 +495,13 @@ int main(int argc, char *argv[]){
       printf("Error invalid relation type\n");
       exit(-1);
     }
-    if(is_str_true(argv[3])){
+    if(is_str_true(argv[3]))
       err = provenance_add_propagate_relation_filter(id);
-    }else{
+    else
       err = provenance_remove_propagate_relation_filter(id);
-    }
-    if(err < 0){
+
+    if(err < 0)
       perror("Could not change propagation settings for this file.\n");
-    }
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILTER_RESET){
@@ -533,9 +509,8 @@ int main(int argc, char *argv[]){
     err |= provenance_reset_propagate_node_filter();
     err |= provenance_reset_relation_filter();
     err |= provenance_reset_propagate_relation_filter();
-    if(err < 0){
+    if(err < 0)
       perror("Could not reset the filters.\n");
-    }
     return 0;
   }
   usage();
