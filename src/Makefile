@@ -6,13 +6,13 @@ LIB = /usr/local/lib/provenancelib.a -lpthread -lz
 .SUFFIXES: .c
 
 all:
-	$(CCC) $(INCLUDES) tool.c $(LIB) -o tool.o $(CCFLAGS)
+	$(CCC) $(INCLUDES) camflow.c $(LIB) -o camflow.o $(CCFLAGS)
 
 debug:
-	$(CCC) $(INCLUDES) tool.c $(LIB) -o tool.o $(CCFLAGS) -g
+	$(CCC) $(INCLUDES) camflow.c $(LIB) -o camflow.o $(CCFLAGS) -g
 
 clean:
-	rm -f tool.o
+	rm -f camflow.o
 
 install:
-	cp --force ./tool.o /usr/bin/camflow
+	cp --force ./camflow.o /usr/bin/camflow
