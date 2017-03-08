@@ -287,7 +287,7 @@ void process(uint32_t pid){
 #define MATCH_ARGS(str1, str2) if(strcmp(str1, str2 )==0)
 
 int main(int argc, char *argv[]){
-  int err;
+  int err=0;
   uint64_t id;
 
   CHECK_ATTR_NB(argc, 2);
@@ -326,8 +326,10 @@ int main(int argc, char *argv[]){
       err = provenance_propagate_file(argv[2], true);
     }else {
       err = provenance_track_file(argv[2], is_str_true(argv[3]));
+      if(err < 0)
+        perror("Could not change tracking settings for this file.\n");
       if(!is_str_true(argv[3]))
-        err |= provenance_propagate_file(argv[2], false);
+        err = provenance_propagate_file(argv[2], false);
     }
     if(err < 0)
       perror("Could not change tracking settings for this file.\n");
@@ -358,8 +360,10 @@ int main(int argc, char *argv[]){
       err = provenance_propagate_process(atoi(argv[2]), true);
     }else {
       err = provenance_track_process(atoi(argv[2]), is_str_true(argv[3]));
+      if(err < 0)
+        perror("Could not change tracking settings for this process.\n");
       if(!is_str_true(argv[3]))
-        err |= provenance_propagate_process(atoi(argv[2]), false);
+        err = provenance_propagate_process(atoi(argv[2]), false);
     }
     if(err < 0)
       perror("Could not change tracking settings for this process.\n");
@@ -506,9 +510,15 @@ int main(int argc, char *argv[]){
   }
   MATCH_ARGS(argv[1], ARG_FILTER_RESET){
     err = provenance_reset_node_filter();
-    err |= provenance_reset_propagate_node_filter();
-    err |= provenance_reset_relation_filter();
-    err |= provenance_reset_propagate_relation_filter();
+    if(err < 0)
+      perror("Could not reset the filters.\n");
+    err = provenance_reset_propagate_node_filter();
+    if(err < 0)
+      perror("Could not reset the filters.\n");
+    err = provenance_reset_relation_filter();
+    if(err < 0)
+      perror("Could not reset the filters.\n");
+    err = provenance_reset_propagate_relation_filter();
     if(err < 0)
       perror("Could not reset the filters.\n");
     return 0;
