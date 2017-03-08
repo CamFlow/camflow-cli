@@ -1,5 +1,6 @@
 # camflow-cli
-Command Line Tool for CamFlow provenance capture
+
+Command Line Interface to manage CamFlow provenance capture.
 
 ## Build Status
 
