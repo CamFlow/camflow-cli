@@ -1,0 +1,18 @@
+dist: trusty
+sudo: required
+language: c
+
+addons:
+  sonarqube:
+    branches:
+      - master
+      - dev
+
+before_install:
+  - sudo apt-get update -qq
+
+script:
+  - sonar-scanner -X -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=https://sonarqube.com
+
+notifications:
+  slack: camflow:T3Umf9cAIwKnaxFEkjeZV7RM
