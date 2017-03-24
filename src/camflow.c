@@ -32,11 +32,11 @@
 #define ARG_ALL                         "-a"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
-#define ARG_TAINT_FILE                  "--taint-file"
+#define ARG_LABEL_FILE                  "--label-file"
 #define ARG_OPAQUE_FILE                 "--opaque-file"
 #define ARG_PROCESS                     "--process"
 #define ARG_TRACK_PROCESS               "--track-process"
-#define ARG_TAINT_PROCESS               "--taint-process"
+#define ARG_LABEL_PROCESS               "--label-process"
 #define ARG_OPAQUE_PROCESS              "--opaque-process"
 #define ARG_TRACK_IPV4_INGRESS          "--track-ipv4-ingress"
 #define ARG_TRACK_IPV4_EGRESS           "--track-ipv4-egress"
@@ -68,11 +68,11 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
   printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
-  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("uint64") " applies taint to the file.\n", ARG_TAINT_FILE);
+  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("bool") " mark/unmark the file as opaque.\n", ARG_OPAQUE_FILE);
   printf(CMD_COLORED CMD_PARAMETER("pid") " display provenance info of a process.\n", ARG_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_PROCESS);
-  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("uint64") " applies taint to the process.\n", ARG_TAINT_PROCESS);
+  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("string") " applies label to the process.\n", ARG_LABEL_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("bool") " mark/unmark the process as opaque.\n", ARG_OPAQUE_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on bind.\n", ARG_TRACK_IPV4_INGRESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on connect.\n", ARG_TRACK_IPV4_EGRESS);
@@ -335,9 +335,9 @@ int main(int argc, char *argv[]){
       perror("Could not change tracking settings for this file.\n");
     return 0;
   }
-  MATCH_ARGS(argv[1], ARG_TAINT_FILE){
+  MATCH_ARGS(argv[1], ARG_LABEL_FILE){
     CHECK_ATTR_NB(argc, 4);
-    err = provenance_taint_file(argv[2], strtoul(argv[3], NULL, 0));
+    err = provenance_label_file(argv[2], argv[3]);
     if(err < 0)
       perror("Could not change taint settings for this file.\n");
     return 0;
@@ -369,9 +369,9 @@ int main(int argc, char *argv[]){
       perror("Could not change tracking settings for this process.\n");
     return 0;
   }
-  MATCH_ARGS(argv[1], ARG_TAINT_PROCESS){
+  MATCH_ARGS(argv[1], ARG_LABEL_PROCESS){
     CHECK_ATTR_NB(argc, 4);
-    err = provenance_taint_process(atoi(argv[2]), strtoul(argv[3], NULL, 0));
+    err = provenance_label_process(atoi(argv[2]), argv[3]);
     if(err < 0)
       perror("Could not change taint settings for this process.\n");
     return 0;
