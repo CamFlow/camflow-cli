@@ -117,12 +117,19 @@ void state( void ){
   struct prov_ipv4_filter filters[100];
   struct secinfo sec_filters[100];
   struct nsinfo ns_filters[100];
+  uint8_t buffer[256];
   int size;
   uint32_t machine_id;
   int i;
 
   provenance_get_machine_id(&machine_id);
   printf("Machine id: %u\n", machine_id);
+
+  printf("Policy hash: ");
+  size = provenance_policy_hash(buffer, 256);
+  for(i=0; i<size; i++)
+    printf("%0X", buffer[i]);
+  printf("\n");
 
   printf("Provenance capture:\n");
   if(provenance_get_enable())
