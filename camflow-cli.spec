@@ -19,5 +19,5 @@ cp -f %{SOURCEURL0}/src/camflow.o ./usr/bin/camflow
 rm -r -f "$RPM_BUILD_ROOT"
 
 %files
-%defattr(644,root,root)
+%defattr(755,root,root)
 /usr/bin/camflow
