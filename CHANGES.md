@@ -8,7 +8,7 @@
 ### v0.1.3
 
 ```
-- 
+- Notify user if CamFlow is not present in the kernel.
 ```
 
 ### v0.1.2
