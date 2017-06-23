@@ -6,7 +6,6 @@ addons:
   sonarqube:
     branches:
       - master
-      - dev
 
 before_install:
   - sudo apt-get update -qq

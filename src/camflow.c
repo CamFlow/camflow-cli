@@ -297,6 +297,12 @@ int main(int argc, char *argv[]){
   int err=0;
   uint64_t id;
 
+  if(!provenance_is_present()){
+    printf(ANSI_COLOR_RED"It appears CamFlow has not been installed on your machine.\n");
+    printf("Please verify you are booted under the correct kernel version\n"ANSI_COLOR_RESET);
+    exit(-1);
+  }
+
   CHECK_ATTR_NB(argc, 2);
   // do it properly, but that will do for now
 
