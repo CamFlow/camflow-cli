@@ -47,6 +47,8 @@
 #define ARG_FILTER_RESET                "--reset-filter"
 #define ARG_SECCTX_FILTER               "--track-secctx"
 #define ARG_CGROUP_FILTER               "--track-cgroup"
+#define ARG_USER_FILTER                 "--track-user"
+#define ARG_GROUP_FILTER                "--track-group"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -78,6 +80,8 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on connect.\n", ARG_TRACK_IPV4_EGRESS);
   printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/delete") " track/propagate based on security context.\n", ARG_SECCTX_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("cgroup ino") CMD_PARAMETER("track/propagate/delete") " track/propagate based on cgroup.\n", ARG_CGROUP_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/delete") " track/propagate based on user.\n", ARG_USER_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/delete") " track/propagate based on group.\n", ARG_CGROUP_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set node filter.\n", ARG_FILTER_NODE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set edge filter.\n", ARG_FILTER_EDGE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate node filter.\n", ARG_PROPAGATE_FILTER_NODE);
@@ -117,6 +121,8 @@ void state( void ){
   struct prov_ipv4_filter filters[100];
   struct secinfo sec_filters[100];
   struct nsinfo ns_filters[100];
+  struct userinfo user_filters[100];
+  struct groupinfo group_filters[100];
   uint8_t buffer[256];
   int size;
   uint32_t machine_id;
@@ -206,6 +212,28 @@ void state( void ){
     if((ns_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
       printf("propagate");
     else if((ns_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
+      printf("track");
+    printf("\n");
+  }
+
+  size = provenance_user(user_filters, 100*sizeof(struct userinfo));
+  printf("User filter (%ld).\n", size/sizeof(struct userinfo));
+  for(i = 0; i < size/sizeof(struct userinfo); i++){
+    printf("%u ", user_filters[i].uid);
+    if((user_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
+      printf("propagate");
+    else if((user_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
+      printf("track");
+    printf("\n");
+  }
+
+  size = provenance_group(group_filters, 100*sizeof(struct groupinfo));
+  printf("Group filter (%ld).\n", size/sizeof(struct groupinfo));
+  for(i = 0; i < size/sizeof(struct groupinfo); i++){
+    printf("%u ", group_filters[i].gid);
+    if((group_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
+      printf("propagate");
+    else if((group_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
     printf("\n");
   }
@@ -455,6 +483,32 @@ int main(int argc, char *argv[]){
 
     if(err < 0)
       perror("Could not change CGroup filter.\n");
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_USER_FILTER){
+    CHECK_ATTR_NB(argc, 4);
+    if( is_str_propagate( argv[3]) )
+      err = provenance_user_propagate(argv[2]);
+    else if( is_str_track(argv[3]))
+      err = provenance_user_track(argv[2]);
+    else if( is_str_delete(argv[3]))
+      err = provenance_user_delete(argv[2]);
+
+    if(err < 0)
+      perror("Could not change user filter.\n");
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_GROUP_FILTER){
+    CHECK_ATTR_NB(argc, 4);
+    if( is_str_propagate( argv[3]) )
+      err = provenance_group_propagate(argv[2]);
+    else if( is_str_track(argv[3]))
+      err = provenance_group_track(argv[2]);
+    else if( is_str_delete(argv[3]))
+      err = provenance_group_delete(argv[2]);
+
+    if(err < 0)
+      perror("Could not change group filter.\n");
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILTER_NODE){
