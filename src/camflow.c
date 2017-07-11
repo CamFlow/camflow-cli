@@ -161,12 +161,12 @@ void state( void ){
     printf("/%d", count_set_bits(filters[i].mask));
     printf(":%d ", ntohs(filters[i].port));
 
-    if((filters[i].op&PROV_NET_PROPAGATE) == PROV_NET_PROPAGATE)
+    if((filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
       printf("propagate");
-    else if((filters[i].op&PROV_NET_TRACKED) == PROV_NET_TRACKED)
+    else if((filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
 
-    if((filters[i].op&PROV_NET_RECORD) == PROV_NET_RECORD)
+    if((filters[i].op&PROV_SET_RECORD) == PROV_SET_RECORD)
       printf(" record");
     printf("\n");
   }
@@ -178,12 +178,12 @@ void state( void ){
     printf("/%d", count_set_bits(filters[i].mask));
     printf(":%d ", ntohs(filters[i].port));
 
-    if((filters[i].op&PROV_NET_PROPAGATE) == PROV_NET_PROPAGATE)
+    if((filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
       printf("propagate");
-    else if((filters[i].op&PROV_NET_TRACKED) == PROV_NET_TRACKED)
+    else if((filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
 
-    if((filters[i].op&PROV_NET_RECORD) == PROV_NET_RECORD)
+    if((filters[i].op&PROV_SET_RECORD) == PROV_SET_RECORD)
       printf(" record");
     printf("\n");
   }
@@ -192,9 +192,9 @@ void state( void ){
   printf("Security context filter (%ld).\n", size/sizeof(struct secinfo));
   for(i = 0; i < size/sizeof(struct secinfo); i++){
     printf("%s ", sec_filters[i].secctx);
-    if((sec_filters[i].op&PROV_SEC_PROPAGATE) == PROV_SEC_PROPAGATE)
+    if((sec_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
       printf("propagate");
-    else if((sec_filters[i].op&PROV_SEC_TRACKED) == PROV_SEC_TRACKED)
+    else if((sec_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
     printf("\n");
   }
@@ -203,9 +203,9 @@ void state( void ){
   printf("Namespace filter (%ld).\n", size/sizeof(struct nsinfo));
   for(i = 0; i < size/sizeof(struct nsinfo); i++){
     printf("%u ", ns_filters[i].cgroupns);
-    if((ns_filters[i].op&PROV_NS_PROPAGATE) == PROV_NS_PROPAGATE)
+    if((ns_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
       printf("propagate");
-    else if((ns_filters[i].op&PROV_NS_TRACKED) == PROV_NS_TRACKED)
+    else if((ns_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
     printf("\n");
   }
