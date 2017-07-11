@@ -20,6 +20,8 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include "provenancelib.h"
 #include "provenancefilter.h"
@@ -122,7 +124,9 @@ void state( void ){
   struct secinfo sec_filters[100];
   struct nsinfo ns_filters[100];
   struct userinfo user_filters[100];
+  struct passwd* pwd;
   struct groupinfo group_filters[100];
+  struct group* grp;
   uint8_t buffer[256];
   int size;
   uint32_t machine_id;
@@ -219,7 +223,8 @@ void state( void ){
   size = provenance_user(user_filters, 100*sizeof(struct userinfo));
   printf("User filter (%ld).\n", size/sizeof(struct userinfo));
   for(i = 0; i < size/sizeof(struct userinfo); i++){
-    printf("%u ", user_filters[i].uid);
+    pwd = getpwuid(user_filters[i].uid);
+    printf("%s ", pwd->pw_name);
     if((user_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
       printf("propagate");
     else if((user_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
@@ -230,7 +235,8 @@ void state( void ){
   size = provenance_group(group_filters, 100*sizeof(struct groupinfo));
   printf("Group filter (%ld).\n", size/sizeof(struct groupinfo));
   for(i = 0; i < size/sizeof(struct groupinfo); i++){
-    printf("%u ", group_filters[i].gid);
+    grp = getgrgid(group_filters[i].gid);
+    printf("%s ", grp->gr_name);
     if((group_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
       printf("propagate");
     else if((group_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
