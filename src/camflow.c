@@ -519,7 +519,7 @@ int main(int argc, char *argv[]){
   }
   MATCH_ARGS(argv[1], ARG_FILTER_NODE){
     CHECK_ATTR_NB(argc, 4);
-    id = node_id(argv[2]);
+    id = node_str_to_id(argv[2], 256);
     if(id == 0){
       printf("Error invalid node type\n");
       exit(-1);
@@ -535,7 +535,7 @@ int main(int argc, char *argv[]){
   }
   MATCH_ARGS(argv[1], ARG_FILTER_EDGE){
     CHECK_ATTR_NB(argc, 4);
-    id = relation_id(argv[2]);
+    id = relation_str_to_id(argv[2], 256);
     if(id == 0){
       printf("Error invalid relation type\n");
       exit(-1);
@@ -551,7 +551,7 @@ int main(int argc, char *argv[]){
   }
   MATCH_ARGS(argv[1], ARG_PROPAGATE_FILTER_NODE){
     CHECK_ATTR_NB(argc, 4);
-    id = node_id(argv[2]);
+    id = node_str_to_id(argv[2], 256);
     if(id == 0){
       printf("Error invalid node type\n");
       exit(-1);
@@ -567,7 +567,7 @@ int main(int argc, char *argv[]){
   }
   MATCH_ARGS(argv[1], ARG_PROPAGATE_FILTER_EDGE){
     CHECK_ATTR_NB(argc, 4);
-    id = relation_id(argv[2]);
+    id = relation_str_to_id(argv[2], 256);
     if(id == 0){
       printf("Error invalid relation type\n");
       exit(-1);
