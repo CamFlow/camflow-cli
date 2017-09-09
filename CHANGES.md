@@ -10,6 +10,7 @@
 
 ### v0.1.6
 ```
+- Add option to set node compression.
 - Use libprovenance as a shared library.
 ```
 

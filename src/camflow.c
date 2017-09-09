@@ -32,6 +32,7 @@
 #define ARG_STATE                       "-s"
 #define ARG_ENABLE                      "-e"
 #define ARG_ALL                         "-a"
+#define ARG_COMPRESS                    "--compress"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
 #define ARG_LABEL_FILE                  "--label-file"
@@ -70,6 +71,7 @@ void usage( void ){
   printf(CMD_COLORED " print provenance capture state.\n", ARG_STATE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " enable/disable provenance capture.\n", ARG_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
+  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS);
   printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
@@ -118,6 +120,16 @@ void all( const char* str ){
     perror("Could not activate/deactivate whole-system provenance capture");
 }
 
+void should_compress( const char* str ){
+  if(!is_str_true(str) && !is_str_false(str)){
+    printf("Excepted a boolean, got %s.\n", str);
+    return;
+  }
+
+  if(provenance_should_compress(is_str_true(str))<0)
+    perror("Could not activate/deactivate node compression.");
+}
+
 void state( void ){
   uint64_t filter=0;
   struct prov_ipv4_filter filters[100];
@@ -151,6 +163,11 @@ void state( void ){
     printf("- all enabled;\n");
   else
     printf("- all disabled;\n");
+
+  if( provenance_does_compress() )
+    printf("- compress enabled;\n");
+  else
+    printf("- compress disabled;\n");
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -360,6 +377,11 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_ALL){
     CHECK_ATTR_NB(argc, 3);
     all(argv[2]);
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_COMPRESS){
+    CHECK_ATTR_NB(argc, 3);
+    should_compress(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
