@@ -32,6 +32,7 @@
 #define ARG_STATE                       "-s"
 #define ARG_ENABLE                      "-e"
 #define ARG_ALL                         "-a"
+#define ARG_POLICY                      "-p"
 #define ARG_COMPRESS                    "--compress"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
@@ -72,6 +73,7 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("bool") " enable/disable provenance capture.\n", ARG_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS);
+  printf(CMD_COLORED " return policy hash.\n", ARG_POLICY);
   printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
@@ -130,6 +132,17 @@ void should_compress( const char* str ){
     perror("Could not activate/deactivate node compression.");
 }
 
+void print_policy_hash( void ){
+  int size;
+  int i;
+  uint8_t buffer[256];
+
+  size = provenance_policy_hash(buffer, 256);
+  for(i=0; i<size; i++)
+    printf("%0X", buffer[i]);
+  printf("\n");
+}
+
 void state( void ){
   uint64_t filter=0;
   struct prov_ipv4_filter filters[100];
@@ -139,19 +152,15 @@ void state( void ){
   struct passwd* pwd;
   struct groupinfo group_filters[100];
   struct group* grp;
-  uint8_t buffer[256];
-  int size;
   uint32_t machine_id;
+  int size;
   int i;
 
   provenance_get_machine_id(&machine_id);
   printf("Machine id: %u\n", machine_id);
 
   printf("Policy hash: ");
-  size = provenance_policy_hash(buffer, 256);
-  for(i=0; i<size; i++)
-    printf("%0X", buffer[i]);
-  printf("\n");
+  print_policy_hash();
 
   printf("Provenance capture:\n");
   if(provenance_get_enable())
@@ -377,6 +386,11 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_ALL){
     CHECK_ATTR_NB(argc, 3);
     all(argv[2]);
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_POLICY){
+    CHECK_ATTR_NB(argc, 2);
+    print_policy_hash();
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_COMPRESS){
