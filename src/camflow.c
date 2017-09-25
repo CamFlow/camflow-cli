@@ -289,7 +289,7 @@ void file( const char* path){
 
   ID_ENCODE(prov_id_buffer(&inode_info), PROV_IDENTIFIER_BUFFER_LENGTH, id, PROV_ID_STR_LEN);
   printf("Identifier: %s\n", id);
-  printf("Type: %lu\n", node_identifier(&inode_info).type);
+  printf("Type: %s\n", node_id_to_str(node_identifier(&inode_info).type));
   printf("ID: %lu\n", node_identifier(&inode_info).id);
   printf("Boot ID: %u\n", node_identifier(&inode_info).boot_id);
   printf("Machine ID: %u\n", node_identifier(&inode_info).machine_id);
