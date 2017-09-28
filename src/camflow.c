@@ -32,6 +32,8 @@
 #define ARG_STATE                       "-s"
 #define ARG_ENABLE                      "-e"
 #define ARG_ALL                         "-a"
+#define ARG_POLICY                      "-p"
+#define ARG_COMPRESS                    "--compress"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
 #define ARG_LABEL_FILE                  "--label-file"
@@ -70,6 +72,8 @@ void usage( void ){
   printf(CMD_COLORED " print provenance capture state.\n", ARG_STATE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " enable/disable provenance capture.\n", ARG_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
+  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS);
+  printf(CMD_COLORED " return policy hash.\n", ARG_POLICY);
   printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
@@ -118,6 +122,27 @@ void all( const char* str ){
     perror("Could not activate/deactivate whole-system provenance capture");
 }
 
+void should_compress( const char* str ){
+  if(!is_str_true(str) && !is_str_false(str)){
+    printf("Excepted a boolean, got %s.\n", str);
+    return;
+  }
+
+  if(provenance_should_compress(is_str_true(str))<0)
+    perror("Could not activate/deactivate node compression.");
+}
+
+void print_policy_hash( void ){
+  int size;
+  int i;
+  uint8_t buffer[256];
+
+  size = provenance_policy_hash(buffer, 256);
+  for(i=0; i<size; i++)
+    printf("%0X", buffer[i]);
+  printf("\n");
+}
+
 void state( void ){
   uint64_t filter=0;
   struct prov_ipv4_filter filters[100];
@@ -127,19 +152,15 @@ void state( void ){
   struct passwd* pwd;
   struct groupinfo group_filters[100];
   struct group* grp;
-  uint8_t buffer[256];
-  int size;
   uint32_t machine_id;
+  int size;
   int i;
 
   provenance_get_machine_id(&machine_id);
   printf("Machine id: %u\n", machine_id);
 
   printf("Policy hash: ");
-  size = provenance_policy_hash(buffer, 256);
-  for(i=0; i<size; i++)
-    printf("%0X", buffer[i]);
-  printf("\n");
+  print_policy_hash();
 
   printf("Provenance capture:\n");
   if(provenance_get_enable())
@@ -151,6 +172,11 @@ void state( void ){
     printf("- all enabled;\n");
   else
     printf("- all disabled;\n");
+
+  if( provenance_does_compress() )
+    printf("- compress enabled;\n");
+  else
+    printf("- compress disabled;\n");
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -263,7 +289,7 @@ void file( const char* path){
 
   ID_ENCODE(prov_id_buffer(&inode_info), PROV_IDENTIFIER_BUFFER_LENGTH, id, PROV_ID_STR_LEN);
   printf("Identifier: %s\n", id);
-  printf("Type: %lu\n", node_identifier(&inode_info).type);
+  printf("Type: %s\n", node_id_to_str(node_identifier(&inode_info).type));
   printf("ID: %lu\n", node_identifier(&inode_info).id);
   printf("Boot ID: %u\n", node_identifier(&inode_info).boot_id);
   printf("Machine ID: %u\n", node_identifier(&inode_info).machine_id);
@@ -360,6 +386,16 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_ALL){
     CHECK_ATTR_NB(argc, 3);
     all(argv[2]);
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_POLICY){
+    CHECK_ATTR_NB(argc, 2);
+    print_policy_hash();
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_COMPRESS){
+    CHECK_ATTR_NB(argc, 3);
+    should_compress(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
