@@ -11,7 +11,7 @@
 
 ### v0.1.7
 ```
-- 
+- Get CamFlow version via kernel API.
 ```
 
 ### v0.1.6

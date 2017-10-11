@@ -272,7 +272,9 @@ void state( void ){
 }
 
 void print_version(){
-  printf("CamFlow %s\n", CAMFLOW_VERSION_STR);
+  char buffer[16];
+  provenance_version(buffer, 16);
+  printf("CamFlow %s\n", buffer);
 }
 
 void file( const char* path){
