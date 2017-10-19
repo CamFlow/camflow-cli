@@ -53,6 +53,7 @@
 #define ARG_CGROUP_FILTER               "--track-cgroup"
 #define ARG_USER_FILTER                 "--track-user"
 #define ARG_GROUP_FILTER                "--track-group"
+#define ARG_CHANNEL                     "--channel"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -93,6 +94,7 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate node filter.\n", ARG_PROPAGATE_FILTER_NODE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate edge filter.\n", ARG_PROPAGATE_FILTER_EDGE);
   printf(CMD_COLORED " reset filters.\n", ARG_FILTER_RESET);
+  printf(CMD_COLORED CMD_PARAMETER("string") " create a new relay channel (in %s" ANSI_COLOR_YELLOW "<string>" ANSI_COLOR_RESET ").\n", ARG_CHANNEL, PROV_CHANNEL_ROOT);
 }
 
 #define is_str_track(str) ( strcmp (str, "track") == 0)
@@ -632,6 +634,13 @@ int main(int argc, char *argv[]){
     err = provenance_reset_propagate_relation_filter();
     if(err < 0)
       perror("Could not reset the filters.\n");
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_CHANNEL){
+    printf("Here?");
+    err = provenance_create_channel(argv[2]);
+    if(err < 0)
+      perror("Could not create new channel.\n");
     return 0;
   }
   usage();
