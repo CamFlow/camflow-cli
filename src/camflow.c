@@ -637,7 +637,6 @@ int main(int argc, char *argv[]){
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_CHANNEL){
-    printf("Here?");
     err = provenance_create_channel(argv[2]);
     if(err < 0)
       perror("Could not create new channel.\n");
