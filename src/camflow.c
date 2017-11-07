@@ -87,8 +87,8 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on connect.\n", ARG_TRACK_IPV4_EGRESS);
   printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/delete") " track/propagate based on security context.\n", ARG_SECCTX_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("cgroup ino") CMD_PARAMETER("track/propagate/delete") " track/propagate based on cgroup.\n", ARG_CGROUP_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/delete") " track/propagate based on user.\n", ARG_USER_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/delete") " track/propagate based on group.\n", ARG_CGROUP_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on user.\n", ARG_USER_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on group.\n", ARG_GROUP_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set node filter.\n", ARG_FILTER_NODE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set edge filter.\n", ARG_FILTER_EDGE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate node filter.\n", ARG_PROPAGATE_FILTER_NODE);
@@ -100,6 +100,7 @@ void usage( void ){
 #define is_str_track(str) ( strcmp (str, "track") == 0)
 #define is_str_delete(str) ( strcmp (str, "delete") == 0)
 #define is_str_propagate(str) ( strcmp (str, "propagate") == 0)
+#define is_str_opaque(str) ( strcmp (str, "opaque") == 0)
 #define is_str_record(str) ( strcmp (str, "record") == 0)
 #define is_str_true(str) ( strcmp (str, "true") == 0)
 #define is_str_false(str) ( strcmp (str, "false") == 0)
@@ -257,6 +258,8 @@ void state( void ){
       printf("propagate");
     else if((user_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
+    else if((user_filters[i].op&PROV_SET_OPAQUE) == PROV_SET_OPAQUE)
+      printf("opaque");
     printf("\n");
   }
 
@@ -269,6 +272,8 @@ void state( void ){
       printf("propagate");
     else if((group_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
+    else if((group_filters[i].op&PROV_SET_OPAQUE) == PROV_SET_OPAQUE)
+      printf("opaque");
     printf("\n");
   }
 }
@@ -537,6 +542,8 @@ int main(int argc, char *argv[]){
       err = provenance_user_propagate(argv[2]);
     else if( is_str_track(argv[3]))
       err = provenance_user_track(argv[2]);
+    else if( is_str_opaque(argv[3]))
+      err = provenance_user_opaque(argv[2]);
     else if( is_str_delete(argv[3]))
       err = provenance_user_delete(argv[2]);
 
@@ -550,6 +557,8 @@ int main(int argc, char *argv[]){
       err = provenance_group_propagate(argv[2]);
     else if( is_str_track(argv[3]))
       err = provenance_group_track(argv[2]);
+    else if( is_str_opaque(argv[3]))
+      err = provenance_group_opaque(argv[2]);
     else if( is_str_delete(argv[3]))
       err = provenance_group_delete(argv[2]);
 

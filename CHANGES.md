@@ -11,6 +11,7 @@
 
 ### v0.1.7
 ```
+- Add support for opaque groups and users.
 - Get CamFlow version via kernel API.
 ```
 
