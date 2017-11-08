@@ -85,7 +85,7 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("bool") " mark/unmark the process as opaque.\n", ARG_OPAQUE_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on bind.\n", ARG_TRACK_IPV4_INGRESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on connect.\n", ARG_TRACK_IPV4_EGRESS);
-  printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/delete") " track/propagate based on security context.\n", ARG_SECCTX_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on security context.\n", ARG_SECCTX_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("cgroup ino") CMD_PARAMETER("track/propagate/delete") " track/propagate based on cgroup.\n", ARG_CGROUP_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on user.\n", ARG_USER_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on group.\n", ARG_GROUP_FILTER);
@@ -516,6 +516,8 @@ int main(int argc, char *argv[]){
       err = provenance_secctx_propagate(argv[2]);
     else if( is_str_track(argv[3]))
       err = provenance_secctx_track(argv[2]);
+    else if( is_str_opaque(argv[3]))
+      err = provenance_secctx_opaque(argv[2]);
     else if( is_str_delete(argv[3]))
       err = provenance_secctx_delete(argv[2]);
 
