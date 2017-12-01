@@ -33,7 +33,7 @@
 #define ARG_ENABLE                      "-e"
 #define ARG_ALL                         "-a"
 #define ARG_POLICY                      "-p"
-#define ARG_COMPRESS                    "--compress"
+#define ARG_COMPRESS                    "--compress-node"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
 #define ARG_LABEL_FILE                  "--label-file"
@@ -125,13 +125,13 @@ void all( const char* str ){
     perror("Could not activate/deactivate whole-system provenance capture");
 }
 
-void should_compress( const char* str ){
+void should_compress_node( const char* str ){
   if(!is_str_true(str) && !is_str_false(str)){
     printf("Excepted a boolean, got %s.\n", str);
     return;
   }
 
-  if(provenance_should_compress(is_str_true(str))<0)
+  if(provenance_should_compress_node(is_str_true(str))<0)
     perror("Could not activate/deactivate node compression.");
 }
 
@@ -176,10 +176,10 @@ void state( void ){
   else
     printf("- all disabled;\n");
 
-  if( provenance_does_compress() )
-    printf("- compress enabled;\n");
+  if( provenance_does_compress_node() )
+    printf("- node compression enabled;\n");
   else
-    printf("- compress disabled;\n");
+    printf("- node compression disabled;\n");
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -404,7 +404,7 @@ int main(int argc, char *argv[]){
   }
   MATCH_ARGS(argv[1], ARG_COMPRESS){
     CHECK_ATTR_NB(argc, 3);
-    should_compress(argv[2]);
+    should_compress_node(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
