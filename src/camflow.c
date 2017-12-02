@@ -33,7 +33,8 @@
 #define ARG_ENABLE                      "-e"
 #define ARG_ALL                         "-a"
 #define ARG_POLICY                      "-p"
-#define ARG_COMPRESS                    "--compress-node"
+#define ARG_COMPRESS_NODE               "--compress-node"
+#define ARG_COMPRESS_EDGE               "--compress-edge"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
 #define ARG_LABEL_FILE                  "--label-file"
@@ -73,8 +74,8 @@ void usage( void ){
   printf(CMD_COLORED " print provenance capture state.\n", ARG_STATE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " enable/disable provenance capture.\n", ARG_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
-  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS);
-  printf(CMD_COLORED " return policy hash.\n", ARG_POLICY);
+  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS_NODE);
+  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate edge compression.\n", ARG_COMPRESS_EDGE);
   printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
@@ -135,6 +136,16 @@ void should_compress_node( const char* str ){
     perror("Could not activate/deactivate node compression.");
 }
 
+void should_compress_edge( const char* str ){
+  if(!is_str_true(str) && !is_str_false(str)){
+    printf("Excepted a boolean, got %s.\n", str);
+    return;
+  }
+
+  if(provenance_should_compress_edge(is_str_true(str))<0)
+    perror("Could not activate/deactivate edge compression.");
+}
+
 void print_policy_hash( void ){
   int size;
   int i;
@@ -180,6 +191,11 @@ void state( void ){
     printf("- node compression enabled;\n");
   else
     printf("- node compression disabled;\n");
+
+  if( provenance_does_compress_edge() )
+    printf("- edge compression enabled;\n");
+  else
+    printf("- edge compression disabled;\n");
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -402,9 +418,14 @@ int main(int argc, char *argv[]){
     print_policy_hash();
     return 0;
   }
-  MATCH_ARGS(argv[1], ARG_COMPRESS){
+  MATCH_ARGS(argv[1], ARG_COMPRESS_NODE){
     CHECK_ATTR_NB(argc, 3);
     should_compress_node(argv[2]);
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_COMPRESS_EDGE){
+    CHECK_ATTR_NB(argc, 3);
+    should_compress_edge(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
