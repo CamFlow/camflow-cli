@@ -11,6 +11,7 @@
 
 ### v0.1.7
 ```
+- Expose CamFlow and libprovenance version.
 - Expand compression handling.
 - Add support for opaque secctx.
 - Add support for opaque groups and users.

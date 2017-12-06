@@ -298,6 +298,8 @@ void print_version(){
   char buffer[16];
   provenance_version(buffer, 16);
   printf("CamFlow %s\n", buffer);
+  provenance_lib_version(buffer, 16);
+  printf("libprovenance %s\n", buffer);
 }
 
 void file( const char* path){
