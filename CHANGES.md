@@ -1,5 +1,6 @@
 | Tool version    | Date       |
 | --------------- | ---------- |
+| 0.1.7           | 12/12/2017 |
 | 0.1.6           | 28/09/2017 |
 | 0.1.5           | 27/08/2017 |
 | 0.1.4           | 02/08/2017 |
@@ -7,6 +8,15 @@
 | 0.1.2           | 22/05/2017 |
 | 0.1.1           | 15/04/2017 |
 | 0.1.0           | 09/03/2017 |
+
+### v0.1.7
+```
+- Expose CamFlow and libprovenance version.
+- Expand compression handling.
+- Add support for opaque secctx.
+- Add support for opaque groups and users.
+- Get CamFlow version via kernel API.
+```
 
 ### v0.1.6
 ```

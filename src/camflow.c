@@ -33,7 +33,8 @@
 #define ARG_ENABLE                      "-e"
 #define ARG_ALL                         "-a"
 #define ARG_POLICY                      "-p"
-#define ARG_COMPRESS                    "--compress"
+#define ARG_COMPRESS_NODE               "--compress-node"
+#define ARG_COMPRESS_EDGE               "--compress-edge"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
 #define ARG_LABEL_FILE                  "--label-file"
@@ -53,6 +54,7 @@
 #define ARG_CGROUP_FILTER               "--track-cgroup"
 #define ARG_USER_FILTER                 "--track-user"
 #define ARG_GROUP_FILTER                "--track-group"
+#define ARG_CHANNEL                     "--channel"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -72,8 +74,8 @@ void usage( void ){
   printf(CMD_COLORED " print provenance capture state.\n", ARG_STATE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " enable/disable provenance capture.\n", ARG_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
-  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS);
-  printf(CMD_COLORED " return policy hash.\n", ARG_POLICY);
+  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS_NODE);
+  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate edge compression.\n", ARG_COMPRESS_EDGE);
   printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
@@ -84,20 +86,22 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("bool") " mark/unmark the process as opaque.\n", ARG_OPAQUE_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on bind.\n", ARG_TRACK_IPV4_INGRESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on connect.\n", ARG_TRACK_IPV4_EGRESS);
-  printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/delete") " track/propagate based on security context.\n", ARG_SECCTX_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on security context.\n", ARG_SECCTX_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("cgroup ino") CMD_PARAMETER("track/propagate/delete") " track/propagate based on cgroup.\n", ARG_CGROUP_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/delete") " track/propagate based on user.\n", ARG_USER_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/delete") " track/propagate based on group.\n", ARG_CGROUP_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on user.\n", ARG_USER_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on group.\n", ARG_GROUP_FILTER);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set node filter.\n", ARG_FILTER_NODE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set edge filter.\n", ARG_FILTER_EDGE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate node filter.\n", ARG_PROPAGATE_FILTER_NODE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate edge filter.\n", ARG_PROPAGATE_FILTER_EDGE);
   printf(CMD_COLORED " reset filters.\n", ARG_FILTER_RESET);
+  printf(CMD_COLORED CMD_PARAMETER("string") " create a new relay channel (in %s" ANSI_COLOR_YELLOW "<string>" ANSI_COLOR_RESET ").\n", ARG_CHANNEL, PROV_CHANNEL_ROOT);
 }
 
 #define is_str_track(str) ( strcmp (str, "track") == 0)
 #define is_str_delete(str) ( strcmp (str, "delete") == 0)
 #define is_str_propagate(str) ( strcmp (str, "propagate") == 0)
+#define is_str_opaque(str) ( strcmp (str, "opaque") == 0)
 #define is_str_record(str) ( strcmp (str, "record") == 0)
 #define is_str_true(str) ( strcmp (str, "true") == 0)
 #define is_str_false(str) ( strcmp (str, "false") == 0)
@@ -122,14 +126,24 @@ void all( const char* str ){
     perror("Could not activate/deactivate whole-system provenance capture");
 }
 
-void should_compress( const char* str ){
+void should_compress_node( const char* str ){
   if(!is_str_true(str) && !is_str_false(str)){
     printf("Excepted a boolean, got %s.\n", str);
     return;
   }
 
-  if(provenance_should_compress(is_str_true(str))<0)
+  if(provenance_should_compress_node(is_str_true(str))<0)
     perror("Could not activate/deactivate node compression.");
+}
+
+void should_compress_edge( const char* str ){
+  if(!is_str_true(str) && !is_str_false(str)){
+    printf("Excepted a boolean, got %s.\n", str);
+    return;
+  }
+
+  if(provenance_should_compress_edge(is_str_true(str))<0)
+    perror("Could not activate/deactivate edge compression.");
 }
 
 void print_policy_hash( void ){
@@ -173,10 +187,15 @@ void state( void ){
   else
     printf("- all disabled;\n");
 
-  if( provenance_does_compress() )
-    printf("- compress enabled;\n");
+  if( provenance_does_compress_node() )
+    printf("- node compression enabled;\n");
   else
-    printf("- compress disabled;\n");
+    printf("- node compression disabled;\n");
+
+  if( provenance_does_compress_edge() )
+    printf("- edge compression enabled;\n");
+  else
+    printf("- edge compression disabled;\n");
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -255,6 +274,8 @@ void state( void ){
       printf("propagate");
     else if((user_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
+    else if((user_filters[i].op&PROV_SET_OPAQUE) == PROV_SET_OPAQUE)
+      printf("opaque");
     printf("\n");
   }
 
@@ -267,12 +288,18 @@ void state( void ){
       printf("propagate");
     else if((group_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
       printf("track");
+    else if((group_filters[i].op&PROV_SET_OPAQUE) == PROV_SET_OPAQUE)
+      printf("opaque");
     printf("\n");
   }
 }
 
 void print_version(){
-  printf("CamFlow %s\n", CAMFLOW_VERSION_STR);
+  char buffer[16];
+  provenance_version(buffer, 16);
+  printf("CamFlow %s\n", buffer);
+  provenance_lib_version(buffer, 16);
+  printf("libprovenance %s\n", buffer);
 }
 
 void file( const char* path){
@@ -393,9 +420,14 @@ int main(int argc, char *argv[]){
     print_policy_hash();
     return 0;
   }
-  MATCH_ARGS(argv[1], ARG_COMPRESS){
+  MATCH_ARGS(argv[1], ARG_COMPRESS_NODE){
     CHECK_ATTR_NB(argc, 3);
-    should_compress(argv[2]);
+    should_compress_node(argv[2]);
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_COMPRESS_EDGE){
+    CHECK_ATTR_NB(argc, 3);
+    should_compress_edge(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
@@ -507,6 +539,8 @@ int main(int argc, char *argv[]){
       err = provenance_secctx_propagate(argv[2]);
     else if( is_str_track(argv[3]))
       err = provenance_secctx_track(argv[2]);
+    else if( is_str_opaque(argv[3]))
+      err = provenance_secctx_opaque(argv[2]);
     else if( is_str_delete(argv[3]))
       err = provenance_secctx_delete(argv[2]);
 
@@ -533,6 +567,8 @@ int main(int argc, char *argv[]){
       err = provenance_user_propagate(argv[2]);
     else if( is_str_track(argv[3]))
       err = provenance_user_track(argv[2]);
+    else if( is_str_opaque(argv[3]))
+      err = provenance_user_opaque(argv[2]);
     else if( is_str_delete(argv[3]))
       err = provenance_user_delete(argv[2]);
 
@@ -546,6 +582,8 @@ int main(int argc, char *argv[]){
       err = provenance_group_propagate(argv[2]);
     else if( is_str_track(argv[3]))
       err = provenance_group_track(argv[2]);
+    else if( is_str_opaque(argv[3]))
+      err = provenance_group_opaque(argv[2]);
     else if( is_str_delete(argv[3]))
       err = provenance_group_delete(argv[2]);
 
@@ -630,6 +668,12 @@ int main(int argc, char *argv[]){
     err = provenance_reset_propagate_relation_filter();
     if(err < 0)
       perror("Could not reset the filters.\n");
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_CHANNEL){
+    err = provenance_create_channel(argv[2]);
+    if(err < 0)
+      perror("Could not create new channel.\n");
     return 0;
   }
   usage();
