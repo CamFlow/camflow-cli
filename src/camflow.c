@@ -209,22 +209,22 @@ void state( void ){
   printf("Used filter (%0lx):\n", filter);
 
   provenance_get_informed_filter(&filter);
-  printf("Informed filter (%0lx):\n", filter);
+  printf("Informed filter (%0lx):\n\n", filter);
 
   provenance_get_propagate_node_filter(&filter);
-  printf("\nPropagate node filter (%0lx):\n", filter);
+  printf("Propagate node filter (%0lx):\n", filter);
 
   provenance_get_derived_filter(&filter);
-  printf("Derived relation filter (%0lx):\n", filter);
+  printf("Propagate derived filter (%0lx):\n", filter);
 
   provenance_get_generated_filter(&filter);
-  printf("Generated relation filter (%0lx):\n", filter);
+  printf("Propagate generated filter (%0lx):\n", filter);
 
   provenance_get_used_filter(&filter);
-  printf("Used relation filter (%0lx):\n", filter);
+  printf("Propagate used filter (%0lx):\n", filter);
 
   provenance_get_informed_filter(&filter);
-  printf("Informed relation filter (%0lx):\n", filter);
+  printf("Propagate informed filter (%0lx):\n\n", filter);
 
   size = provenance_ingress_ipv4(filters, 100*sizeof(struct prov_ipv4_filter));
   printf("IPv4 ingress filter (%ld).\n", size/sizeof(struct prov_ipv4_filter));
