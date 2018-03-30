@@ -186,6 +186,11 @@ void state( void ){
   else
     printf("- all disabled;\n");
 
+  if( provenance_was_written() )
+    printf("- provenance has been captured;\n");
+  else
+    printf("- provenance was not captured;\n");
+
   if( provenance_does_compress_node() )
     printf("- node compression enabled;\n");
   else
