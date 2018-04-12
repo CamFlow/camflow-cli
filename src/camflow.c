@@ -34,6 +34,7 @@
 #define ARG_POLICY                      "-p"
 #define ARG_COMPRESS_NODE               "--compress-node"
 #define ARG_COMPRESS_EDGE               "--compress-edge"
+#define ARG_DUPLICATE                   "--duplicate"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
 #define ARG_LABEL_FILE                  "--label-file"
@@ -75,6 +76,7 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS_NODE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate edge compression.\n", ARG_COMPRESS_EDGE);
+  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate duplication.\n", ARG_DUPLICATE);
   printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
@@ -145,6 +147,16 @@ void should_compress_edge( const char* str ){
     perror("Could not activate/deactivate edge compression.");
 }
 
+void should_duplicate( const char* str ){
+  if(!is_str_true(str) && !is_str_false(str)){
+    printf("Excepted a boolean, got %s.\n", str);
+    return;
+  }
+
+  if(provenance_should_duplicate(is_str_true(str))<0)
+    perror("Could not activate/deactivate duplication.");
+}
+
 void print_policy_hash( void ){
   int size;
   int i;
@@ -200,6 +212,11 @@ void state( void ){
     printf("- edge compression enabled;\n");
   else
     printf("- edge compression disabled;\n");
+
+  if( provenance_does_duplicate() )
+    printf("- duplication enabled;\n");
+  else
+    printf("- duplication disabled;\n");
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -450,6 +467,11 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_COMPRESS_EDGE){
     CHECK_ATTR_NB(argc, 3);
     should_compress_edge(argv[2]);
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_DUPLICATE){
+    CHECK_ATTR_NB(argc, 3);
+    should_duplicate(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
