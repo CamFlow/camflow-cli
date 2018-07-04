@@ -468,6 +468,9 @@ void print_config(void) {
   struct passwd* pwd;
   struct groupinfo group_filters[100];
   struct group* grp;
+  char *buf;
+  uint64_t filter=0;
+  uint64_t id;
 
   printf(";Auto-generated configuration\n");
   printf("[provenance]\n");
@@ -482,6 +485,161 @@ void print_config(void) {
     printf("true\n");
   else
     printf("false\n");
+  provenance_get_node_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("node_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_propagate_node_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_derived_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_DERIVED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_generated_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_GENERATED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_used_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_USED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_informed_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_INFORMED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_propagate_node_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_derived_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_DERIVED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_generated_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_GENERATED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_used_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_USED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_informed_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_INFORMED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
 
   /* compression configuration */
   printf("\n");
