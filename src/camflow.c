@@ -32,6 +32,7 @@
 #define ARG_ENABLE                      "-e"
 #define ARG_ALL                         "-a"
 #define ARG_POLICY                      "-p"
+#define ARG_CONFIG                      "-c"
 #define ARG_COMPRESS_NODE               "--compress-node"
 #define ARG_COMPRESS_EDGE               "--compress-edge"
 #define ARG_DUPLICATE                   "--duplicate"
@@ -72,6 +73,7 @@ void usage( void ){
   printf(CMD_COLORED " usage.\n", ARG_HELP);
   printf(CMD_COLORED " version.\n", ARG_VERSION);
   printf(CMD_COLORED " print provenance capture state.\n", ARG_STATE);
+  printf(CMD_COLORED " print out current configuration (can copy content in /etc/camflow.ini).\n", ARG_CONFIG);
   printf(CMD_COLORED CMD_PARAMETER("bool") " enable/disable provenance capture.\n", ARG_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
   printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS_NODE);
@@ -178,6 +180,8 @@ void state( void ){
   struct groupinfo group_filters[100];
   struct group* grp;
   uint32_t machine_id;
+  char *buf;
+  uint64_t id;
   int size;
   int i;
 
@@ -220,33 +224,155 @@ void state( void ){
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
   provenance_get_derived_filter(&filter);
   printf("Derived filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_DERIVED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
   provenance_get_generated_filter(&filter);
   printf("Generated filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_GENERATED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
   provenance_get_used_filter(&filter);
   printf("Used filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_USED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
   provenance_get_informed_filter(&filter);
-  printf("Informed filter (%0lx):\n\n", filter);
+  printf("Informed filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_INFORMED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
+  printf("\n");
 
   provenance_get_propagate_node_filter(&filter);
   printf("Propagate node filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
-  provenance_get_derived_filter(&filter);
+  provenance_get_propagate_derived_filter(&filter);
   printf("Propagate derived filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_DERIVED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
-  provenance_get_generated_filter(&filter);
+  provenance_get_propagate_generated_filter(&filter);
   printf("Propagate generated filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_GENERATED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
-  provenance_get_used_filter(&filter);
+  provenance_get_propagate_used_filter(&filter);
   printf("Propagate used filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_USED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
 
-  provenance_get_informed_filter(&filter);
-  printf("Propagate informed filter (%0lx):\n\n", filter);
+  provenance_get_propagate_informed_filter(&filter);
+  printf("Propagate informed filter (%0lx):\n", filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_INFORMED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("%s\n", buf);
+        continue;
+      }
+    }
+  }
+  printf("\n");
 
   size = provenance_ingress_ipv4(filters, 100*sizeof(struct prov_ipv4_filter));
   printf("IPv4 ingress filter (%ld).\n", size/sizeof(struct prov_ipv4_filter));
@@ -330,6 +456,298 @@ void state( void ){
     else if((group_filters[i].op&PROV_SET_OPAQUE) == PROV_SET_OPAQUE)
       printf("opaque");
     printf("\n");
+  }
+}
+
+void print_config(void) {
+  int size;
+  int i;
+  struct prov_ipv4_filter filters[100];
+  struct secinfo sec_filters[100];
+  struct userinfo user_filters[100];
+  struct passwd* pwd;
+  struct groupinfo group_filters[100];
+  struct group* grp;
+  char *buf;
+  uint64_t filter=0;
+  uint64_t id;
+
+  printf(";Auto-generated configuration\n");
+  printf("[provenance]\n");
+  printf("machine_id=0\n");
+  printf("enabled=");
+  if(provenance_get_enable())
+    printf("true\n");
+  else
+    printf("false\n");
+  printf("all=");
+  if( provenance_get_all() )
+    printf("true\n");
+  else
+    printf("false\n");
+  provenance_get_node_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("node_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_propagate_node_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_derived_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_DERIVED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_generated_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_GENERATED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_used_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_USED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_informed_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_INFORMED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+  provenance_get_propagate_node_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = node_id_to_str(DM_ACTIVITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_AGENT|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+      buf = node_id_to_str(DM_ENTITY|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_node_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_derived_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_DERIVED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_generated_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_GENERATED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_used_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_USED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  provenance_get_propagate_informed_filter(&filter);
+  for (i = 0; i < 32; i++){
+    id = 1 << i;
+    if ((id & filter) != 0){
+      buf = relation_id_to_str(RL_INFORMED|id);
+      if (strcmp("unknown", buf)!=0) {
+        printf("propagate_relation_filter=%s\n", buf);
+        continue;
+      }
+    }
+  }
+
+  /* compression configuration */
+  printf("\n");
+  printf("[compression]\n");
+  printf("node=");
+  if( provenance_does_compress_node() )
+    printf("true\n");
+  else
+    printf("false\n");
+  printf("edge=");
+  if( provenance_does_compress_edge() )
+    printf("true\n");
+  else
+    printf("false\n");
+  printf("duplicate=");
+  if( provenance_does_duplicate() )
+    printf("true;\n");
+  else
+    printf("false\n");
+
+  /* IPV4 ingress */
+  printf("\n");
+  printf("[ipv4-ingress]\n");
+  size = provenance_ingress_ipv4(filters, 100*sizeof(struct prov_ipv4_filter));
+  for(i = 0; i < size/sizeof(struct prov_ipv4_filter); i++){
+    if((filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE) {
+      printf("propagate=");
+      printf("%s", uint32_to_ipv4str(filters[i].ip));
+      printf("/%d", count_set_bits(filters[i].mask));
+      printf(":%d\n", ntohs(filters[i].port));
+    } else if((filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED) {
+      printf("track=");
+      printf("%s", uint32_to_ipv4str(filters[i].ip));
+      printf("/%d", count_set_bits(filters[i].mask));
+      printf(":%d\n", ntohs(filters[i].port));
+    }
+    if((filters[i].op&PROV_SET_RECORD) == PROV_SET_RECORD){
+      printf("record=");
+      printf("%s", uint32_to_ipv4str(filters[i].ip));
+      printf("/%d", count_set_bits(filters[i].mask));
+      printf(":%d\n", ntohs(filters[i].port));
+    }
+  }
+
+  /* IPV4 ingress */
+  printf("\n");
+  printf("[ipv4-egress]\n");
+  size = provenance_egress_ipv4(filters, 100*sizeof(struct prov_ipv4_filter));
+  for(i = 0; i < size/sizeof(struct prov_ipv4_filter); i++){
+    if((filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE) {
+      printf("propagate=");
+      printf("%s", uint32_to_ipv4str(filters[i].ip));
+      printf("/%d", count_set_bits(filters[i].mask));
+      printf(":%d\n", ntohs(filters[i].port));
+    } else if((filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED) {
+      printf("track=");
+      printf("%s", uint32_to_ipv4str(filters[i].ip));
+      printf("/%d", count_set_bits(filters[i].mask));
+      printf(":%d\n", ntohs(filters[i].port));
+    }
+    if((filters[i].op&PROV_SET_RECORD) == PROV_SET_RECORD){
+      printf("record=");
+      printf("%s", uint32_to_ipv4str(filters[i].ip));
+      printf("/%d", count_set_bits(filters[i].mask));
+      printf(":%d\n", ntohs(filters[i].port));
+    }
+  }
+
+  /* user */
+  printf("\n");
+  printf("[user]\n");
+  size = provenance_user(user_filters, 100*sizeof(struct userinfo));
+  for(i = 0; i < size/sizeof(struct userinfo); i++){
+    if((user_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
+      printf("propagate=");
+    else if((user_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
+      printf("track=");
+    else if((user_filters[i].op&PROV_SET_OPAQUE) == PROV_SET_OPAQUE)
+      printf("opaque=");
+    pwd = getpwuid(user_filters[i].uid);
+    printf("%s\n", pwd->pw_name);
+  }
+
+  /* user */
+  printf("\n");
+  printf("[group]\n");
+  size = provenance_group(group_filters, 100*sizeof(struct groupinfo));
+  for(i = 0; i < size/sizeof(struct groupinfo); i++){
+    grp = getgrgid(group_filters[i].gid);
+    if((group_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
+      printf("propagate=");
+    else if((group_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
+      printf("track=");
+    else if((group_filters[i].op&PROV_SET_OPAQUE) == PROV_SET_OPAQUE)
+      printf("opaque=");
+    printf("%s\n", grp->gr_name);
+  }
+
+  /* secctx */
+  printf("\n");
+  printf("[secctx]\n");
+  size = provenance_secctx(sec_filters, 100*sizeof(struct secinfo));
+  for(i = 0; i < size/sizeof(struct secinfo); i++){
+    if((sec_filters[i].op&PROV_SET_PROPAGATE) == PROV_SET_PROPAGATE)
+      printf("propagate=");
+    else if((sec_filters[i].op&PROV_SET_TRACKED) == PROV_SET_TRACKED)
+      printf("track=");
+    printf("%s\n", sec_filters[i].secctx);
   }
 }
 
@@ -434,6 +852,10 @@ int main(int argc, char *argv[]){
 
   MATCH_ARGS(argv[1], ARG_HELP){
     usage();
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_CONFIG){
+    print_config();
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_VERSION){
