@@ -56,6 +56,7 @@
 #define ARG_USER_FILTER                 "--track-user"
 #define ARG_GROUP_FILTER                "--track-group"
 #define ARG_CHANNEL                     "--channel"
+#define ARG_EPOCH                       "--change-epoch"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -99,6 +100,7 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate edge filter.\n", ARG_PROPAGATE_FILTER_EDGE);
   printf(CMD_COLORED " reset filters.\n", ARG_FILTER_RESET);
   printf(CMD_COLORED CMD_PARAMETER("string") " create a new relay channel (in %s" ANSI_COLOR_YELLOW "<string>" ANSI_COLOR_RESET ").\n", ARG_CHANNEL, PROV_CHANNEL_ROOT);
+  printf(CMD_COLORED " change epoch.\n", ARG_EPOCH);
 }
 
 #define is_str_track(str) ( strcmp (str, "track") == 0)
@@ -894,6 +896,11 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_DUPLICATE){
     CHECK_ATTR_NB(argc, 3);
     should_duplicate(argv[2]);
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_EPOCH){
+    CHECK_ATTR_NB(argc, 2);
+    provenance_change_epoch();
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
