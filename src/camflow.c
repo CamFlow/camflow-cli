@@ -754,10 +754,12 @@ void print_config(void) {
 }
 
 void print_version(){
-  char buffer[16];
-  provenance_version(buffer, 16);
+  char buffer[256];
+  provenance_version(buffer, 256);
   printf("CamFlow %s\n", buffer);
-  provenance_lib_version(buffer, 16);
+  provenance_commit(buffer, 256);
+  printf("CamFlow https://github.com/camflow/camflow-dev/commit/%s\n", buffer);
+  provenance_lib_version(buffer, 256);
   printf("libprovenance %s\n", buffer);
 }
 
