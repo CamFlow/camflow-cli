@@ -1,9 +1,10 @@
 /*
-* CamFlow userspace provenance tool
 *
-* Author: Thomas Pasquier <tfjmp@seas.harvard.edu>
+* Author: Thomas Pasquier <thomas.pasquier@bristol.ac.uk>
 *
-* Copyright (C) 2016 Harvard University
+* Copyright (C) 2016-2017 Harvard University
+* Copyright (C) 2017-2018 University of Cambridge
+* Copyright (C) 2018-2019 University of Bristol
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License version 2, as
