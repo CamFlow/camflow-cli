@@ -72,36 +72,36 @@
 #define CMD_WARNING(str) ANSI_COLOR_RED str ANSI_COLOR_RESET
 
 void usage( void ){
-  printf(CMD_COLORED " usage.\n", ARG_HELP);
-  printf(CMD_COLORED " version.\n", ARG_VERSION);
-  printf(CMD_COLORED " print provenance capture state.\n", ARG_STATE);
-  printf(CMD_COLORED " print out current configuration (can copy content in /etc/camflow.ini).\n", ARG_CONFIG);
-  printf(CMD_COLORED CMD_PARAMETER("bool") " enable/disable provenance capture.\n", ARG_ENABLE);
-  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate whole-system provenance capture.\n", ARG_ALL);
-  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate node compression.\n", ARG_COMPRESS_NODE);
-  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate edge compression.\n", ARG_COMPRESS_EDGE);
-  printf(CMD_COLORED CMD_PARAMETER("bool") " activate/deactivate duplication.\n", ARG_DUPLICATE);
-  printf(CMD_COLORED CMD_PARAMETER("filename") " display provenance info of a file.\n", ARG_FILE);
-  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_FILE);
-  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") " applies label to the file.\n", ARG_LABEL_FILE);
-  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("bool") " mark/unmark the file as opaque.\n", ARG_OPAQUE_FILE);
-  printf(CMD_COLORED CMD_PARAMETER("pid") " display provenance info of a process.\n", ARG_PROCESS);
-  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("false/true/propagate") " set tracking.\n", ARG_TRACK_PROCESS);
-  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("string") " applies label to the process.\n", ARG_LABEL_PROCESS);
-  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("bool") " mark/unmark the process as opaque.\n", ARG_OPAQUE_PROCESS);
-  printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on bind.\n", ARG_TRACK_IPV4_INGRESS);
-  printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") " track/propagate on connect.\n", ARG_TRACK_IPV4_EGRESS);
-  printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on security context.\n", ARG_SECCTX_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("cgroup ino") CMD_PARAMETER("track/propagate/delete") " track/propagate based on cgroup.\n", ARG_CGROUP_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on user.\n", ARG_USER_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/opaque/delete") " track/propagate based on group.\n", ARG_GROUP_FILTER);
-  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set node filter.\n", ARG_FILTER_NODE);
-  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set edge filter.\n", ARG_FILTER_EDGE);
-  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate node filter.\n", ARG_PROPAGATE_FILTER_NODE);
-  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") " set propagate edge filter.\n", ARG_PROPAGATE_FILTER_EDGE);
-  printf(CMD_COLORED " reset filters.\n", ARG_FILTER_RESET);
-  printf(CMD_COLORED CMD_PARAMETER("string") " create a new relay channel (in %s" ANSI_COLOR_YELLOW "<string>" ANSI_COLOR_RESET ").\n", ARG_CHANNEL, PROV_CHANNEL_ROOT);
-  printf(CMD_COLORED " change epoch.\n", ARG_EPOCH);
+  printf(CMD_COLORED "\n usage.\n\n", ARG_HELP);
+  printf(CMD_COLORED "\n version.\n\n", ARG_VERSION);
+  printf(CMD_COLORED "\n print provenance capture state.\n\n", ARG_STATE);
+  printf(CMD_COLORED "\n print out current configuration (can copy content in /etc/camflow.ini).\n\n", ARG_CONFIG);
+  printf(CMD_COLORED CMD_PARAMETER("bool") "\n enable/disable provenance capture.\n\n", ARG_ENABLE);
+  printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate whole-system provenance capture.\n\n", ARG_ALL);
+  printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate node compression.\n\n", ARG_COMPRESS_NODE);
+  printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate edge compression.\n\n", ARG_COMPRESS_EDGE);
+  printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate duplication.\n\n", ARG_DUPLICATE);
+  printf(CMD_COLORED CMD_PARAMETER("filename") "\n display provenance info of a file.\n\n", ARG_FILE);
+  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") "\n set tracking.\n\n", ARG_TRACK_FILE);
+  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") "\n applies label to the file.\n\n", ARG_LABEL_FILE);
+  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("bool") "\n mark/unmark the file as opaque.\n\n", ARG_OPAQUE_FILE);
+  printf(CMD_COLORED CMD_PARAMETER("pid") "\n display provenance info of a process.\n\n", ARG_PROCESS);
+  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("false/true/propagate") "\n set tracking.\n\n", ARG_TRACK_PROCESS);
+  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("string") "\n applies label to the process.\n\n", ARG_LABEL_PROCESS);
+  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("bool") "\n mark/unmark the process as opaque.\n\n", ARG_OPAQUE_PROCESS);
+  printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") "\n track/propagate on bind.\n\n", ARG_TRACK_IPV4_INGRESS);
+  printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") "\n track/propagate on connect.\n\n", ARG_TRACK_IPV4_EGRESS);
+  printf(CMD_COLORED CMD_PARAMETER("security context") CMD_PARAMETER("track/propagate/opaque/delete") "\n track/propagate based on security context.\n\n", ARG_SECCTX_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("cgroup ino") CMD_PARAMETER("track/propagate/delete") "\n track/propagate based on cgroup.\n\n", ARG_CGROUP_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("user name") CMD_PARAMETER("track/propagate/opaque/delete") "\n track/propagate based on user.\n\n", ARG_USER_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("group name") CMD_PARAMETER("track/propagate/opaque/delete") "\n track/propagate based on group.\n\n", ARG_GROUP_FILTER);
+  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set node filter.\n\n", ARG_FILTER_NODE);
+  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set edge filter.\n\n", ARG_FILTER_EDGE);
+  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set propagate node filter.\n\n", ARG_PROPAGATE_FILTER_NODE);
+  printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set propagate edge filter.\n\n", ARG_PROPAGATE_FILTER_EDGE);
+  printf(CMD_COLORED "\n reset filters.\n\n", ARG_FILTER_RESET);
+  printf(CMD_COLORED CMD_PARAMETER("string") "\n create a new relay channel (in %s" ANSI_COLOR_YELLOW "<string>" ANSI_COLOR_RESET ").\n\n", ARG_CHANNEL, PROV_CHANNEL_ROOT);
+  printf(CMD_COLORED "\n change epoch.\n\n", ARG_EPOCH);
 }
 
 #define is_str_track(str) ( strcmp (str, "track") == 0)
