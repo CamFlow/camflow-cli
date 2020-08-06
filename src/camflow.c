@@ -36,7 +36,6 @@
 #define ARG_CONFIG                      "-c"
 #define ARG_COMPRESS_NODE               "--compress-node"
 #define ARG_COMPRESS_EDGE               "--compress-edge"
-#define ARG_DUPLICATE                   "--duplicate"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
 #define ARG_LABEL_FILE                  "--label-file"
@@ -80,7 +79,6 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate whole-system provenance capture.\n\n", ARG_ALL);
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate node compression.\n\n", ARG_COMPRESS_NODE);
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate edge compression.\n\n", ARG_COMPRESS_EDGE);
-  printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate duplication.\n\n", ARG_DUPLICATE);
   printf(CMD_COLORED CMD_PARAMETER("filename") "\n display provenance info of a file.\n\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") "\n set tracking.\n\n", ARG_TRACK_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") "\n applies label to the file.\n\n", ARG_LABEL_FILE);
@@ -152,16 +150,6 @@ void should_compress_edge( const char* str ){
     perror("Could not activate/deactivate edge compression.");
 }
 
-void should_duplicate( const char* str ){
-  if(!is_str_true(str) && !is_str_false(str)){
-    printf("Excepted a boolean, got %s.\n", str);
-    return;
-  }
-
-  if(provenance_should_duplicate(is_str_true(str))<0)
-    perror("Could not activate/deactivate duplication.");
-}
-
 void print_policy_hash( void ){
   int size;
   int i;
@@ -219,11 +207,6 @@ void state( void ){
     printf("- edge compression enabled;\n");
   else
     printf("- edge compression disabled;\n");
-
-  if( provenance_does_duplicate() )
-    printf("- duplication enabled;\n");
-  else
-    printf("- duplication disabled;\n");
 
   provenance_get_node_filter(&filter);
   printf("\nNode filter (%0lx):\n", filter);
@@ -657,11 +640,6 @@ void print_config(void) {
     printf("true\n");
   else
     printf("false\n");
-  printf("duplicate=");
-  if( provenance_does_duplicate() )
-    printf("true;\n");
-  else
-    printf("false\n");
 
   /* IPV4 ingress */
   printf("\n");
@@ -896,11 +874,6 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_COMPRESS_EDGE){
     CHECK_ATTR_NB(argc, 3);
     should_compress_edge(argv[2]);
-    return 0;
-  }
-  MATCH_ARGS(argv[1], ARG_DUPLICATE){
-    CHECK_ATTR_NB(argc, 3);
-    should_duplicate(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_EPOCH){
