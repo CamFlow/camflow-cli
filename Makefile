@@ -1,4 +1,4 @@
-version=0.2.1
+version=0.2.0
 
 prepare:
 	@echo "Nothing to do"
