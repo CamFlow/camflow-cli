@@ -39,11 +39,11 @@
 #define ARG_DUPLICATE                   "--duplicate"
 #define ARG_FILE                        "--file"
 #define ARG_TRACK_FILE                  "--track-file"
-#define ARG_LABEL_FILE                  "--label-file"
+#define ARG_TAINT_FILE                  "--taint-file"
 #define ARG_OPAQUE_FILE                 "--opaque-file"
 #define ARG_PROCESS                     "--process"
 #define ARG_TRACK_PROCESS               "--track-process"
-#define ARG_LABEL_PROCESS               "--label-process"
+#define ARG_TAINT_PROCESS               "--taint-process"
 #define ARG_OPAQUE_PROCESS              "--opaque-process"
 #define ARG_TRACK_IPV4_INGRESS          "--track-ipv4-ingress"
 #define ARG_TRACK_IPV4_EGRESS           "--track-ipv4-egress"
@@ -83,11 +83,11 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate duplication.\n\n", ARG_DUPLICATE);
   printf(CMD_COLORED CMD_PARAMETER("filename") "\n display provenance info of a file.\n\n", ARG_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("false/true/propagate") "\n set tracking.\n\n", ARG_TRACK_FILE);
-  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("string") "\n applies label to the file.\n\n", ARG_LABEL_FILE);
+  printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("int [0-63]") "\n applies taint to the file.\n\n", ARG_TAINT_FILE);
   printf(CMD_COLORED CMD_PARAMETER("filename") CMD_PARAMETER("bool") "\n mark/unmark the file as opaque.\n\n", ARG_OPAQUE_FILE);
   printf(CMD_COLORED CMD_PARAMETER("pid") "\n display provenance info of a process.\n\n", ARG_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("false/true/propagate") "\n set tracking.\n\n", ARG_TRACK_PROCESS);
-  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("string") "\n applies label to the process.\n\n", ARG_LABEL_PROCESS);
+  printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("int [0-63]") "\n applies taint to the process.\n\n", ARG_TAINT_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("pid") CMD_PARAMETER("bool") "\n mark/unmark the process as opaque.\n\n", ARG_OPAQUE_PROCESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") "\n track/propagate on bind.\n\n", ARG_TRACK_IPV4_INGRESS);
   printf(CMD_COLORED CMD_PARAMETER("ip/mask:port") CMD_PARAMETER("track/propagate/record/delete") "\n track/propagate on connect.\n\n", ARG_TRACK_IPV4_EGRESS);
@@ -769,7 +769,6 @@ void print_version(){
 void file( const char* path){
   union prov_elt inode_info;
   char id[PROV_ID_STR_LEN];
-  char taint[TAINT_STR_LEN];
   int err;
 
   err = provenance_read_file(path, &inode_info);
@@ -785,8 +784,7 @@ void file( const char* path){
   printf("Boot ID: %u\n", node_identifier(&inode_info).boot_id);
   printf("Machine ID: %u\n", node_identifier(&inode_info).machine_id);
   printf("Version: %u\n", node_identifier(&inode_info).version);
-  TAINT_ENCODE(prov_taint(&(inode_info)), PROV_N_BYTES, taint, TAINT_STR_LEN);
-  printf("Taint: %s\n", taint);
+  printf("Taint: %0X\n", prov_taint(&inode_info));
   printf("\n");
   if( provenance_is_tracked(&inode_info) )
     printf("File is tracked.\n");
@@ -807,7 +805,6 @@ void file( const char* path){
 void process(uint32_t pid){
   union prov_elt process_info;
   char id[PROV_ID_STR_LEN];
-  char taint[TAINT_STR_LEN];
   int err;
 
   err = provenance_read_process(pid, &process_info);
@@ -822,8 +819,7 @@ void process(uint32_t pid){
   printf("ID: %lu\n", node_identifier(&process_info).id);
   printf("Boot ID: %u\n", node_identifier(&process_info).boot_id);
   printf("Machine ID: %u\n", node_identifier(&process_info).machine_id);
-  TAINT_ENCODE(prov_taint(&(process_info)), PROV_N_BYTES, taint, TAINT_STR_LEN);
-  printf("Taint: %s\n", taint);
+  printf("Taint: %0X\n", prov_taint(&process_info));
   printf("\n");
   if( provenance_is_tracked(&process_info) )
     printf("Process is tracked.\n");
@@ -846,7 +842,8 @@ void process(uint32_t pid){
 
 int main(int argc, char *argv[]){
   int err=0;
-  uint64_t id;
+  int taint_bit = 0;
+  uint64_t id, taint;
 
   if(!provenance_is_present()){
     printf(ANSI_COLOR_RED"It appears CamFlow has not been installed on your machine.\n");
@@ -928,9 +925,13 @@ int main(int argc, char *argv[]){
       perror("Could not change tracking settings for this file.\n");
     return 0;
   }
-  MATCH_ARGS(argv[1], ARG_LABEL_FILE){
+  MATCH_ARGS(argv[1], ARG_TAINT_FILE){
     CHECK_ATTR_NB(argc, 4);
-    err = provenance_label_file(argv[2], argv[3]);
+    taint_bit = atoi(argv[3]);
+    if(taint_bit > 63 || taint_bit < 0)
+      perror("Tag bit must be set between 0 and 63.\n");
+    taint = 1 << taint_bit;
+    err = provenance_taint_file(argv[2], taint);
     if(err < 0)
       perror("Could not change taint settings for this file.\n");
     return 0;
@@ -962,9 +963,13 @@ int main(int argc, char *argv[]){
       perror("Could not change tracking settings for this process.\n");
     return 0;
   }
-  MATCH_ARGS(argv[1], ARG_LABEL_PROCESS){
+  MATCH_ARGS(argv[1], ARG_TAINT_PROCESS){
     CHECK_ATTR_NB(argc, 4);
-    err = provenance_label_process(atoi(argv[2]), argv[3]);
+    taint_bit = atoi(argv[3]);
+    if(taint_bit > 63 || taint_bit < 0)
+      perror("Tag bit must be set between 0 and 63.\n");
+    taint = 1 << taint_bit;
+    err = provenance_taint_process(atoi(argv[2]), taint);
     if(err < 0)
       perror("Could not change taint settings for this process.\n");
     return 0;
