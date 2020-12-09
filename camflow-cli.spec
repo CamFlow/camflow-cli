@@ -1,11 +1,12 @@
 Summary: CamFlow command line interface
 Name: camflow-cli
-Version: 0.2.1
+Version: 0.2.2
 Release: 1
 Group: audit/camflow
 License: GPLv2
 Source: %{expand:%%(pwd)}
 BuildRoot: %{_topdir}/BUILD/%{name}-%{version}-%{release}
+AutoReqProv: no
 
 %description
 %{summary}
