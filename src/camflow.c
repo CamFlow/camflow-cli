@@ -56,7 +56,6 @@
 #define ARG_CGROUP_FILTER               "--track-cgroup"
 #define ARG_USER_FILTER                 "--track-user"
 #define ARG_GROUP_FILTER                "--track-group"
-#define ARG_CHANNEL                     "--channel"
 #define ARG_EPOCH                       "--change-epoch"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -100,7 +99,6 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set propagate node filter.\n\n", ARG_PROPAGATE_FILTER_NODE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set propagate edge filter.\n\n", ARG_PROPAGATE_FILTER_EDGE);
   printf(CMD_COLORED "\n reset filters.\n\n", ARG_FILTER_RESET);
-  printf(CMD_COLORED CMD_PARAMETER("string") "\n create a new relay channel (in %s" ANSI_COLOR_YELLOW "<string>" ANSI_COLOR_RESET ").\n\n", ARG_CHANNEL, PROV_CHANNEL_ROOT);
   printf(CMD_COLORED "\n change epoch.\n\n", ARG_EPOCH);
 }
 
@@ -1151,12 +1149,6 @@ int main(int argc, char *argv[]){
     err = provenance_reset_propagate_relation_filter();
     if(err < 0)
       perror("Could not reset the filters.\n");
-    return 0;
-  }
-  MATCH_ARGS(argv[1], ARG_CHANNEL){
-    err = provenance_create_channel(argv[2]);
-    if(err < 0)
-      perror("Could not create new channel.\n");
     return 0;
   }
   usage();
