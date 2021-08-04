@@ -840,9 +840,7 @@ void process(uint32_t pid){
 void print_dropped_info (void) {
   struct dropped drop;
   provenance_dropped(&drop);
-  printf("Total drop: \t\t%lu\n\n", drop.s + drop.l);
-  printf("Dropped graph elements: \t\t%lu\n", drop.s);
-  printf("Dropped long graph elements: \t\t%lu\n", drop.l);
+  printf("Elements dropped: \t\t%lu\n", drop.s);
 }
 
 #define CHECK_ATTR_NB(argc, min) if(argc < min){ usage();exit(-1);}
