@@ -22,6 +22,7 @@
 
 ### v0.2.2
 ```
+- Display graph elements drops.
 - Switch back to single relay channel support.
 ```
 

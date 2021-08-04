@@ -57,6 +57,7 @@
 #define ARG_USER_FILTER                 "--track-user"
 #define ARG_GROUP_FILTER                "--track-group"
 #define ARG_EPOCH                       "--change-epoch"
+#define ARG_DROPPED                     "--dropped"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -100,6 +101,7 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set propagate edge filter.\n\n", ARG_PROPAGATE_FILTER_EDGE);
   printf(CMD_COLORED "\n reset filters.\n\n", ARG_FILTER_RESET);
   printf(CMD_COLORED "\n change epoch.\n\n", ARG_EPOCH);
+  printf(CMD_COLORED "\n display information about dropped graph elements.\n\n", ARG_DROPPED);
 }
 
 #define is_str_track(str) ( strcmp (str, "track") == 0)
@@ -835,6 +837,14 @@ void process(uint32_t pid){
     printf("Process is not propagating tracking.\n");
 }
 
+void print_dropped_info (void) {
+  struct dropped drop;
+  provenance_dropped(&drop);
+  printf("Total drop: \t\t%lu\n\n", drop.s + drop.l);
+  printf("Dropped graph elements: \t\t%lu\n", drop.s);
+  printf("Dropped long graph elements: \t\t%lu\n", drop.l);
+}
+
 #define CHECK_ATTR_NB(argc, min) if(argc < min){ usage();exit(-1);}
 #define MATCH_ARGS(str1, str2) if(strcmp(str1, str2 )==0)
 
@@ -901,6 +911,11 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_EPOCH){
     CHECK_ATTR_NB(argc, 2);
     provenance_change_epoch();
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_DROPPED){
+    CHECK_ATTR_NB(argc, 2);
+    print_dropped_info();
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
