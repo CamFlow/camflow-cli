@@ -57,7 +57,7 @@
 #define ARG_USER_FILTER                 "--track-user"
 #define ARG_GROUP_FILTER                "--track-group"
 #define ARG_EPOCH                       "--change-epoch"
-#define ARG_DROPPED                     "--dropped"
+#define ARG_DROPPED                     "--drop"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -840,7 +840,7 @@ void process(uint32_t pid){
 void print_dropped_info (void) {
   struct dropped drop;
   provenance_dropped(&drop);
-  printf("Elements dropped: \t\t%lu\n", drop.s);
+  printf("Graph elements dropped: \t\t%lu\n", drop.s);
 }
 
 #define CHECK_ATTR_NB(argc, min) if(argc < min){ usage();exit(-1);}
