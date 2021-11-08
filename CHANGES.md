@@ -24,6 +24,7 @@
 ```
 - Display graph elements drops.
 - Switch back to single relay channel support.
+- Switch to Fedora 35.
 ```
 
 ### v0.2.1
