@@ -56,8 +56,8 @@
 #define ARG_CGROUP_FILTER               "--track-cgroup"
 #define ARG_USER_FILTER                 "--track-user"
 #define ARG_GROUP_FILTER                "--track-group"
-#define ARG_CHANNEL                     "--channel"
 #define ARG_EPOCH                       "--change-epoch"
+#define ARG_DROPPED                     "--drop"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -100,8 +100,8 @@ void usage( void ){
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set propagate node filter.\n\n", ARG_PROPAGATE_FILTER_NODE);
   printf(CMD_COLORED CMD_PARAMETER("type") CMD_PARAMETER("bool") "\n set propagate edge filter.\n\n", ARG_PROPAGATE_FILTER_EDGE);
   printf(CMD_COLORED "\n reset filters.\n\n", ARG_FILTER_RESET);
-  printf(CMD_COLORED CMD_PARAMETER("string") "\n create a new relay channel (in %s" ANSI_COLOR_YELLOW "<string>" ANSI_COLOR_RESET ").\n\n", ARG_CHANNEL, PROV_CHANNEL_ROOT);
   printf(CMD_COLORED "\n change epoch.\n\n", ARG_EPOCH);
+  printf(CMD_COLORED "\n display information about dropped graph elements.\n\n", ARG_DROPPED);
 }
 
 #define is_str_track(str) ( strcmp (str, "track") == 0)
@@ -837,6 +837,12 @@ void process(uint32_t pid){
     printf("Process is not propagating tracking.\n");
 }
 
+void print_dropped_info (void) {
+  struct dropped drop;
+  provenance_dropped(&drop);
+  printf("Graph elements dropped: \t\t%lu\n", drop.s);
+}
+
 #define CHECK_ATTR_NB(argc, min) if(argc < min){ usage();exit(-1);}
 #define MATCH_ARGS(str1, str2) if(strcmp(str1, str2 )==0)
 
@@ -903,6 +909,11 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_EPOCH){
     CHECK_ATTR_NB(argc, 2);
     provenance_change_epoch();
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_DROPPED){
+    CHECK_ATTR_NB(argc, 2);
+    print_dropped_info();
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_FILE){
@@ -1151,12 +1162,6 @@ int main(int argc, char *argv[]){
     err = provenance_reset_propagate_relation_filter();
     if(err < 0)
       perror("Could not reset the filters.\n");
-    return 0;
-  }
-  MATCH_ARGS(argv[1], ARG_CHANNEL){
-    err = provenance_create_channel(argv[2]);
-    if(err < 0)
-      perror("Could not create new channel.\n");
     return 0;
   }
   usage();
