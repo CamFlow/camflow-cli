@@ -1,6 +1,6 @@
 Summary: CamFlow command line interface
 Name: camflow-cli
-Version: 0.2.2
+Version: 0.2.3
 Release: 1
 Group: audit/camflow
 License: GPLv2
