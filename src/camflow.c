@@ -36,6 +36,7 @@
 #define ARG_ALL                         "-a"
 #define ARG_POLICY                      "-p"
 #define ARG_CONFIG                      "-c"
+#define ARG_VERSION_ENABLE              "--enable-version"
 #define ARG_COMPRESS_NODE               "--compress-node"
 #define ARG_COMPRESS_EDGE               "--compress-edge"
 #define ARG_DUPLICATE                   "--duplicate"
@@ -80,6 +81,7 @@ void usage( void ){
   printf(CMD_COLORED "\n print out current configuration (can copy content in /etc/camflow.ini).\n\n", ARG_CONFIG);
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n enable/disable provenance capture.\n\n", ARG_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate whole-system provenance capture.\n\n", ARG_ALL);
+  printf(CMD_COLORED CMD_PARAMETER("bool") "\n enable/disable versioning.\n\n", ARG_VERSION_ENABLE);
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate node compression.\n\n", ARG_COMPRESS_NODE);
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate edge compression.\n\n", ARG_COMPRESS_EDGE);
   printf(CMD_COLORED CMD_PARAMETER("bool") "\n activate/deactivate duplication.\n\n", ARG_DUPLICATE);
@@ -132,6 +134,15 @@ void all( const char* str ){
 
   if(provenance_set_all(is_str_true(str))<0)
     perror("Could not activate/deactivate whole-system provenance capture");
+}
+
+void should_version( const char* str ){
+  if(!is_str_true(str) && !is_str_false(str)){
+    printf("Excepted a boolean, got %s.\n", str);
+    return;
+  }
+  if(provenance_should_version(is_str_true(str))<0)
+    perror("Could not enable/disable versioning.");
 }
 
 void should_compress_node( const char* str ){
@@ -649,6 +660,11 @@ void print_config(void) {
   /* compression configuration */
   printf("\n");
   printf("[compression]\n");
+  printf("version=");
+  if( provenance_does_version() )
+    printf("true\n");
+  else
+    printf("false\n");
   printf("node=");
   if( provenance_does_compress_node() )
     printf("true\n");
@@ -891,6 +907,11 @@ int main(int argc, char *argv[]){
   MATCH_ARGS(argv[1], ARG_POLICY){
     CHECK_ATTR_NB(argc, 2);
     print_policy_hash();
+    return 0;
+  }
+  MATCH_ARGS(argv[1], ARG_VERSION_ENABLE){
+    CHECK_ATTR_NB(argc, 3);
+    should_version(argv[2]);
     return 0;
   }
   MATCH_ARGS(argv[1], ARG_COMPRESS_NODE){

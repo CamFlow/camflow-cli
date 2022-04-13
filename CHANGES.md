@@ -23,6 +23,7 @@
 
 ### v0.2.3
 ```
+- Allow to turn versioning on/off.
 ```
 
 ### v0.2.2
